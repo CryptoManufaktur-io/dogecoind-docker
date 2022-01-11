@@ -1,0 +1,48 @@
+version: "3.4"
+x-logging: &logging
+  logging:
+    driver: json-file
+    options:
+      max-size: 20m
+      max-file: "3"
+
+services:
+  dogecoind:
+    restart: "${RESTART}"
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: dogecoind:local
+    user: dogecoin
+    stop_grace_period: 1m
+    volumes:
+      - dogecoind-data:/var/lib/dogecoin
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 22556:22556/tcp
+    expose:
+      - 22555/tcp
+    <<: *logging
+    entrypoint:
+      - dogecoind
+      - --datadir=/var/lib/dogecoin
+      - --printtoconsole
+      - --disablewallet
+      - --txindex=1
+      - --rpcuser=${RPC_USER}
+      - --rpcpassword=${RPC_PW}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.doge.entrypoints=websecure
+      - traefik.http.routers.doge.rule=Host(`${DOGE_HOST}.${DOMAIN}`)
+      - traefik.http.routers.doge.service=doge
+      - traefik.http.routers.doge.tls.certresolver=letsencrypt
+      - traefik.http.routers.dogelb.entrypoints=websecure
+      - traefik.http.routers.dogelb.rule=Host(`${DOGE_LB}.${DOMAIN}`)
+      - traefik.http.routers.dogelb.service=doge
+      - traefik.http.routers.dogelb.tls.certresolver=letsencrypt
+      - traefik.http.services.doge.loadbalancer.server.port=22555
+
+volumes:
+  dogecoind-data:
