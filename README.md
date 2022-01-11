@@ -6,7 +6,8 @@ To deploy:
 
 `cp default.env .env`, set `COMPOSE_FILE` if you are going to use an external network or a local traefik
 
-`docker-compose run --rm rpcuser USERNAME`, then set the `RPCAUTH` variable in `.env`
+`docker-compose run --rm rpcuser USERNAME`, then set the `RPCAUTH` variable in `.env`. Store the password,
+you'll use it when accessing RPC.
 
 `docker-compose up -d dogecoind`
 
