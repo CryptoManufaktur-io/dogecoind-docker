@@ -4,10 +4,10 @@ dogecoind in docker-compose
 
 To deploy:
 
-`cp default.env .env`, and set the RPC username and password
+`cp default.env .env`, set `COMPOSE_FILE` if you are going to use an external network or a local traefik
 
-Set `COMPOSE_FILE` if you are going to use an external network or a local traefik
+`docker-compose run --rm rpcuser USERNAME`, then set the `RPCAUTH` variable in `.env`
 
-`docker-compose up -d`
+`docker-compose up -d dogecoind`
 
 If there's a new release of dogecoind, pull it with `docker-compose build --no-cache`

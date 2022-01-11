@@ -2,4 +2,4 @@ version: "3.4"
 services:
   dogecoind:
     ports:
-      - 127.0.0.1:22555:22555/tcp
+      - 22555:22555/tcp

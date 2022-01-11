@@ -5,10 +5,12 @@ RUN apt-get update \
        ca-certificates \
        jq \
        curl \
+       python2 \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN mkdir /dogecoin && curl -sSLf "$(curl -sSLf https://api.github.com/repos/dogecoin/dogecoin/releases/latest | jq -r '.assets[] | select(.name | endswith("x86_64-linux-gnu.tar.gz")).browser_download_url')" -o dogecoind.tar.gz \
   && tar xzf dogecoind.tar.gz -C /dogecoin --wildcards '*bin*' && find /dogecoin -type f -exec mv {} /usr/local/bin \; && rm -rf dogecoin dogecoind.tar.gz
+RUN curl -s https://raw.githubusercontent.com/dogecoin/dogecoin/master/share/rpcuser/rpcuser.py -o /usr/local/bin/rpcuser.py && chmod +x /usr/local/bin/rpcuser.py
 
 ARG USER=dogecoin
 ARG UID=12000

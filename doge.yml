@@ -30,8 +30,10 @@ services:
       - --printtoconsole
       - --disablewallet
       - --txindex=1
-      - --rpcuser=${RPC_USER}
-      - --rpcpassword=${RPC_PW}
+      - --rpcauth=${RPC_AUTH}
+      - --server
+      - --rpcbind=0.0.0.0
+      - --rpcallowip=0.0.0.0/0
     labels:
       - traefik.enable=true
       - traefik.http.routers.doge.entrypoints=websecure
@@ -43,6 +45,11 @@ services:
       - traefik.http.routers.dogelb.service=doge
       - traefik.http.routers.dogelb.tls.certresolver=letsencrypt
       - traefik.http.services.doge.loadbalancer.server.port=22555
+  rpcuser:
+    restart: "no"
+    image: dogecoind:local
+    entrypoint:
+      - rpcuser.py
 
 volumes:
   dogecoind-data:
