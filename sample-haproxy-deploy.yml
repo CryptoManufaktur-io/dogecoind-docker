@@ -1,0 +1,40 @@
+version: "3.4"
+x-logging: &logging
+  logging:
+    driver: json-file
+    options:
+      max-size: 20m
+      max-file: "3"
+
+services:
+  doge-haproxy:
+    image: haproxy:latest
+    user: root
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        apt-get update
+        apt-get install -y curl jq bc ca-certificates
+        exec haproxy -f /usr/local/etc/haproxy/haproxy.cfg
+    networks:
+      default:
+        aliases:
+          - doge-lb.example.com
+    configs:
+      - source: doge-haproxy.cfg
+        target: /usr/local/etc/haproxy/haproxy.cfg
+      - source: check-dogesync.sh
+        target: /var/lib/haproxy/check-dogesync.sh
+        mode: 0555
+    deploy:
+      mode: replicated
+      replicas: 2
+      placement:
+        constraints: ["node.role == worker"]
+    <<: *logging
+
+configs:
+  doge-haproxy.cfg:
+    external: true
+  check-dogesync.sh:
+    external: true 

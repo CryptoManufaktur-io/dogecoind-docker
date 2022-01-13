@@ -34,6 +34,7 @@ services:
       - --server
       - --rpcbind=0.0.0.0
       - --rpcallowip=0.0.0.0/0
+      - --rpcworkqueue=512
     labels:
       - traefik.enable=true
       - traefik.http.routers.doge.entrypoints=websecure
